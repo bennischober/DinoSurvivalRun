@@ -21,7 +21,7 @@ public class SpawnManager : MonoBehaviour
     private Vector3 hpSpawnPos = new Vector3(-60.09998f, 9, -100);
 
     // Spawn pos for flyEnemy
-    private Vector3 flyEnemyPos = new Vector3(-60.1f, 15.75f, -100.0f);
+    private Vector3 flyEnemyPos = new Vector3(-60.1f, 18.2f, -100.0f);
 
     // Get isGameOver_b
     private PlayerController _playerController;

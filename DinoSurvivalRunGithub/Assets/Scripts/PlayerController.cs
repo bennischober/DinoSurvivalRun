@@ -14,8 +14,14 @@ public class PlayerController : MonoBehaviour
     // get Animator of player
     private Animator playerAnimator;
 
+    // get Particle System of player
+    public ParticleSystem dirtParticle;
+
     // get isGamePaused_b
     private PauseMenu _pauseMenu;
+
+    // get SHIFT cooldown
+    private BetterJump _betterJump;
 
     // get player y
     public GameObject playerJumpHeight;
@@ -65,6 +71,8 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         _pauseMenu = GameObject.FindObjectOfType<PauseMenu>();
+        _betterJump = GameObject.FindObjectOfType<BetterJump>();
+
         playerRb = GetComponent<Rigidbody>();
         playerAnimator = GameObject.Find("PlayerCharacter").GetComponent<Animator>();
 
@@ -103,6 +111,9 @@ public class PlayerController : MonoBehaviour
             // animation to jump
             playerAnimator.SetTrigger("Jump_trig");
             playerAnimator.SetBool("isGrounded_b", false);
+
+            // stop particles in air
+            dirtParticle.Stop();
         }
 
         // get current counters for GUI bar on top
@@ -123,8 +134,22 @@ public class PlayerController : MonoBehaviour
             meterWalked_i += (int)timeToInt_f;
             realMeterWalked_i = meterWalked_i / 100;
 
-            meterRan_s = "Meters ran: " + realMeterWalked_i;
-            _pauseMenu.metersRan.GetComponent<Text>().text = meterRan_s;
+            if (_betterJump.cooldownSeconds_i == 5)
+            {
+                meterRan_s = "SHIFT up in: " + "not on CD!";
+                _pauseMenu.metersRan.GetComponent<Text>().text = meterRan_s;
+            }
+            else if (_betterJump.cooldownSeconds_i == 0)
+            {
+                meterRan_s = "SHIFT up in: " + "not on CD!";
+                _pauseMenu.metersRan.GetComponent<Text>().text = meterRan_s;
+            }
+            else
+            {
+                meterRan_s = "SHIFT up in: " + _betterJump.cooldownSeconds_i;
+                _pauseMenu.metersRan.GetComponent<Text>().text = meterRan_s;
+            }
+
         }
 
         // end screen score
@@ -151,6 +176,9 @@ public class PlayerController : MonoBehaviour
         {
             isOnGround_b = true;
             playerAnimator.SetBool("isGrounded_b", true);
+
+            // play particles
+            dirtParticle.Play();
         }
 
         // hitting obstacles, hp and end states are calculated here
@@ -210,6 +238,8 @@ public class PlayerController : MonoBehaviour
             highestScore_i = currentScore_i;
             PlayerPrefs.SetInt("HighestScore", highestScore_i);
         }
+
+        dirtParticle.Stop();
 
         Time.timeScale = 0;
     }

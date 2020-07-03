@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -31,11 +32,12 @@ public class BetterJump : MonoBehaviour
     private float clickTime_f;
 
     // count cooldown length
-    private int cooldownSeconds_i;
+    [NonSerialized] public int cooldownSeconds_i;
 
     void Start()
     {
         _playerController = GameObject.FindObjectOfType<PlayerController>();
+        playerRb = GetComponent<Rigidbody>();
 
         pressingShiftCooldown_b = false;
         holdingSpaceCooldown_b = false;
@@ -44,10 +46,6 @@ public class BetterJump : MonoBehaviour
         cooldownSeconds_i = 5;
     }
 
-    void Awake()
-    {
-        playerRb = GetComponent<Rigidbody>();
-    }
 
     void Update()
     {
