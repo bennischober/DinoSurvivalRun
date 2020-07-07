@@ -10,35 +10,21 @@ public class PauseMenu : MonoBehaviour
     // get isGameOver_b
     private PlayerController _playerController;
 
+    // hp changes in GUI
+    public GameObject changeHPPanel, loseHP_GO, gainHP_GO;
+    [NonSerialized] public Animator loseHP_Anim, gainHP_Anim;
+
     // get whole menu panel
-    public GameObject menuPanel;
-    public GameObject statsPanel;
-    public GameObject currentStatsPanel;
-    public GameObject gameOverPanel;
-    public GameObject getName;
+    public GameObject menuPanel, statsPanel, currentStatsPanel, gameOverPanel, getName;
 
     // text fields in stats window
-    public GameObject getNameStats;
-    public GameObject allJumpsStats;
-    public GameObject currentJumpsStats;
-    public GameObject bestJumpsStats;
-    public GameObject ScoreSystemStats;
-    public GameObject meterWalkedStats;
+    public GameObject getNameStats, allJumpsStats, currentJumpsStats, bestJumpsStats, ScoreSystemStats, meterWalkedStats;
 
     // get text fields in GUI -> could be moved to a GUI manager
-    public GameObject scoreText;
-    public GameObject endScoreText;
-    public GameObject playerHp;
-    public GameObject metersRan;
-    public GameObject bestScoreText;
+    public GameObject scoreText, endScoreText, playerHp, metersRan, bestScoreText;
 
     // variables for stats output
-    private string playerName_s;
-    private string obstacleJump_s;
-    private string scoreSystem_s;
-    private string meterRan_s;
-    private string playerJumps_s;
-    private string highestJumps_s;
+    private string playerName_s, obstacleJump_s, scoreSystem_s, meterRan_s, playerJumps_s, highestJumps_s;
 
     // checks, if game is paused
     [NonSerialized] public bool isGamePaused_b;
@@ -51,6 +37,12 @@ public class PauseMenu : MonoBehaviour
     void Start()
     {
         _playerController = GameObject.FindObjectOfType<PlayerController>();
+
+        loseHP_Anim = loseHP_GO.GetComponent<Animator>();
+        gainHP_Anim = gainHP_GO.GetComponent<Animator>();
+
+        loseHP_GO.GetComponent<Text>().text = "-1";
+        gainHP_GO.GetComponent<Text>().text = "+1";
 
         isGamePaused_b = false;
         isStatOpen_b = false;

@@ -30,20 +30,20 @@ public class PlayerController : MonoBehaviour
     public float jumpForce_f = 10;
 
     // public float gravityModifier_f;
-    public bool isOnGround_b = true;
-    public bool isGameOver_b;
+    public bool isOnGround_b = true, isGameOver_b;
 
     // name for player high score saves
     private string playerNameHighscore_s;
 
+    // check if HP is lost or gained
+    private bool lostHp_b;
+
     // !-- VARIABLES FOR COUNTER --! \\
     // best score
-    [NonSerialized] public int highestScore_i;
-    [NonSerialized] public int currentScore_i;
+    [NonSerialized] public int highestScore_i, currentScore_i;
 
     // count events
-    [NonSerialized] public int countObstacleJump_i;
-    [NonSerialized] public int countPlayerJumps_i;
+    [NonSerialized] public int countObstacleJump_i, countPlayerJumps_i;
 
     // counts if player hits an obstacle -> used to run a spawn hp method only once!
     [NonSerialized] public int countObstacleHit_i;
@@ -60,10 +60,7 @@ public class PlayerController : MonoBehaviour
     private float timeToInt_f;
 
     // count in GUI bar on top
-    private string highestScore_s;
-    private string currentScore_s;
-    private string playerHp_s;
-    private string meterRan_s;
+    private string highestScore_s, currentScore_s, playerHp_s, meterRan_s;
 
     // !-- END OF VARIABLES FOR COUNTER --! \\
 
@@ -136,12 +133,12 @@ public class PlayerController : MonoBehaviour
 
             if (_betterJump.cooldownSeconds_i == 5)
             {
-                meterRan_s = "SHIFT up in: " + "not on CD!";
+                meterRan_s = "SHIFT not on CD!";
                 _pauseMenu.metersRan.GetComponent<Text>().text = meterRan_s;
             }
             else if (_betterJump.cooldownSeconds_i == 0)
             {
-                meterRan_s = "SHIFT up in: " + "not on CD!";
+                meterRan_s = "SHIFT not on CD!";
                 _pauseMenu.metersRan.GetComponent<Text>().text = meterRan_s;
             }
             else
@@ -167,6 +164,9 @@ public class PlayerController : MonoBehaviour
         {
             playerHp_i++;
             playerHpCollected_i++;
+
+            HpChange("gain");
+
             Destroy(GameObject.FindWithTag("PickupLifeParent"));
             Debug.Log("HP received");
         }
@@ -189,9 +189,11 @@ public class PlayerController : MonoBehaviour
             {
                 playerHp_i--;
 
+                HpChange("lost");
+
                 if (playerHp_i > 0)
                 {
-                    Destroy(GameObject.FindWithTag("ObstacleParent")); // might be replaced with RB on parent and new collision
+                    Destroy(GameObject.FindWithTag("ObstacleParent"));
                 }
             }
 
@@ -206,6 +208,9 @@ public class PlayerController : MonoBehaviour
             if (playerHp_i >= 1)
             {
                 playerHp_i--;
+
+                HpChange("lost");
+
                 if (playerHp_i > 0)
                 {
                     Destroy(GameObject.FindWithTag("FlyEnemyParent"));
@@ -244,6 +249,50 @@ public class PlayerController : MonoBehaviour
         Time.timeScale = 0;
     }
 
+    // sets up the animation and text in GUI + calls the HpChangeAnimation method
+    private void HpChange(string s)
+    {
+
+        if (s == "gain" && !isGameOver_b)
+        {
+            _pauseMenu.changeHPPanel.SetActive(!_pauseMenu.changeHPPanel.gameObject.activeSelf);
+            _pauseMenu.gainHP_GO.SetActive(!_pauseMenu.gainHP_GO.gameObject.activeSelf);
+            _pauseMenu.gainHP_Anim.enabled = true;
+            _pauseMenu.gainHP_Anim.SetBool("Gained_HP", true);
+            _pauseMenu.gainHP_Anim.Play("Gain HP");
+            Invoke("GainHPAnimation", 1);
+        }
+        else if (s == "lost" && !isGameOver_b)
+        {
+            _pauseMenu.changeHPPanel.SetActive(!_pauseMenu.changeHPPanel.gameObject.activeSelf);
+            _pauseMenu.loseHP_GO.SetActive(!_pauseMenu.loseHP_GO.gameObject.activeSelf);
+            _pauseMenu.loseHP_Anim.enabled = true;
+            _pauseMenu.loseHP_Anim.SetBool("HP_Lost", true);
+            _pauseMenu.loseHP_Anim.Play("Lose HP");
+            Invoke("LostHPAnimation", 1);
+        }
+    }
+
+    // deactivates the GO's and stops the animation -> +1 and -1 HP in GUI
+    private void GainHPAnimation()
+    {
+        _pauseMenu.changeHPPanel.SetActive(!_pauseMenu.changeHPPanel.gameObject.activeSelf);
+        _pauseMenu.gainHP_GO.SetActive(!_pauseMenu.gainHP_GO.gameObject.activeSelf);
+        _pauseMenu.gainHP_Anim.SetBool("Gained_HP", false);
+        _pauseMenu.gainHP_Anim.enabled = false;
+    }
+
+    // deactivates the GO's and stops the animation -> +1 and -1 HP in GUI
+    private void LostHPAnimation()
+    {
+        _pauseMenu.changeHPPanel.SetActive(!_pauseMenu.changeHPPanel.gameObject.activeSelf);
+        _pauseMenu.loseHP_GO.SetActive(!_pauseMenu.loseHP_GO.gameObject.activeSelf);
+        _pauseMenu.loseHP_Anim.SetBool("HP_Lost", false);
+        _pauseMenu.loseHP_Anim.enabled = false;
+    }
+
+
+    // Player class and methods \\
     // adds ne high score to the PlayerPrefs with JSON, sorts the stats and limits them to 15
     private void AddPlayerHighscore(string name, int score, int jumps, int walked)
     {
