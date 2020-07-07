@@ -84,10 +84,10 @@ public class PauseMenu : MonoBehaviour
 
         if (isStatOpen_b)
         {
-            scoreSystem_s = "How the score system works: Your valid obstacle jumps get multiplied by the meters you walked and by another value. Calculation: (int)(ObstacleJump * MetersWalked * 0.1)";
+            scoreSystem_s = "Scoresystem: valid jumps get multiplied by meters and by another value. Calculation: (int)(ObstacleJump * MetersWalked * 0.1)";
             ScoreSystemStats.GetComponent<Text>().text = scoreSystem_s;
 
-            meterRan_s = "Meters walked: " + _playerController.realMeterWalked_i;
+            meterRan_s = "Controls: use 'SHIFT' to fall down fast. Note: It has a 5 seconds cooldown!";
             meterWalkedStats.GetComponent<Text>().text = meterRan_s;
 
             playerJumps_s = "Times jumped: " + _playerController.countPlayerJumps_i;

@@ -11,6 +11,9 @@ public class PlayerController : MonoBehaviour
     // get rigid body of player
     private Rigidbody playerRb;
 
+    // get jump sound
+    public AudioSource jumpSound, backgroundSound;
+
     // get Animator of player
     private Animator playerAnimator;
 
@@ -25,6 +28,9 @@ public class PlayerController : MonoBehaviour
 
     // get player y
     public GameObject playerJumpHeight;
+
+    // get mats for sky box
+    public Material dayMat, nightMat;
 
     // jump force -> get's its value in editor
     public float jumpForce_f = 10;
@@ -88,6 +94,12 @@ public class PlayerController : MonoBehaviour
         highestScore_i = PlayerPrefs.GetInt("HighestScore", 0);
 
         playerAnimator.SetBool("isDead_b", false);
+
+        // start game sound
+        backgroundSound.Play();
+
+        // Initial start of day-night rhythm
+        ChangeSkyBoxDay();
     }
 
     // Update is called once per frame
@@ -100,6 +112,9 @@ public class PlayerController : MonoBehaviour
 
             isOnGround_b = false;
             Debug.Log("Player is in Air!");
+
+            // play jump sound
+            jumpSound.Play();
 
             //count player jumps
             countPlayerJumps_i++;
@@ -149,9 +164,22 @@ public class PlayerController : MonoBehaviour
 
         }
 
+        // stops music on game pause
+        if (_pauseMenu.isGamePaused_b)
+        {
+            Cursor.visible = true;
+            backgroundSound.Pause();
+        }
+        else if (!_pauseMenu.isGamePaused_b)
+        {
+            Cursor.visible = false;
+            backgroundSound.UnPause();
+        }
+
         // end screen score
         if (isGameOver_b)
         {
+            Cursor.visible = true;
             currentScore_s = "Your score was: " + currentScore_i;
             _pauseMenu.endScoreText.GetComponent<Text>().text = currentScore_s;
         }
@@ -246,6 +274,8 @@ public class PlayerController : MonoBehaviour
 
         dirtParticle.Stop();
 
+        backgroundSound.Stop();
+
         Time.timeScale = 0;
     }
 
@@ -289,6 +319,28 @@ public class PlayerController : MonoBehaviour
         _pauseMenu.loseHP_GO.SetActive(!_pauseMenu.loseHP_GO.gameObject.activeSelf);
         _pauseMenu.loseHP_Anim.SetBool("HP_Lost", false);
         _pauseMenu.loseHP_Anim.enabled = false;
+    }
+
+    // change sky box mat to day
+    private void ChangeSkyBoxDay()
+    {
+        if (!isGameOver_b)
+        {
+            RenderSettings.skybox = dayMat;
+
+            Invoke("ChangeSkyBoxNight", 30);
+        }
+    }
+
+    // change sky box mat to night
+    private void ChangeSkyBoxNight()
+    {
+        if (!isGameOver_b)
+        {
+            RenderSettings.skybox = nightMat;
+
+            Invoke("ChangeSkyBoxDay", 30);
+        }
     }
 
 
