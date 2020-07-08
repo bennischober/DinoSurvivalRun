@@ -67,7 +67,7 @@ public class PlayerController : MonoBehaviour
 
     // count in GUI bar on top
     private string highestScore_s, currentScore_s, playerHp_s, meterRan_s;
-
+    
     // !-- END OF VARIABLES FOR COUNTER --! \\
 
     // Start is called before the first frame update
