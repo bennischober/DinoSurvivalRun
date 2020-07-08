@@ -21,7 +21,7 @@ public class SpawnManager : MonoBehaviour
     private Vector3 hpSpawnPos = new Vector3(-60.09998f, 9, -100);
 
     // Spawn pos for flyEnemy
-    private Vector3 flyEnemyPos = new Vector3(-60.1f, 15.75f, -100.0f);
+    private Vector3 flyEnemyPos = new Vector3(-60.1f, 18.2f, -100.0f);
 
     // Get isGameOver_b
     private PlayerController _playerController;
@@ -97,7 +97,7 @@ public class SpawnManager : MonoBehaviour
     {
         if (!_playerController.isGameOver_b)
         {
-            flyEnemySpawnRate_f = Random.Range(3.0f, 4.0f);
+            flyEnemySpawnRate_f = Random.Range(4.0f, 6.0f);
 
             Instantiate(flyEnemy, flyEnemyPos, flyEnemy.transform.rotation);
             Invoke("SpawnFlyEnemy", flyEnemySpawnRate_f);
@@ -110,7 +110,7 @@ public class SpawnManager : MonoBehaviour
         if (!_playerController.isGameOver_b)
         {
             // set time to spawn next tree
-            treeSpawnRate_f = Random.Range(0.5f, 1.1f);
+            treeSpawnRate_f = Random.Range(0.2f, 0.5f);
 
             // random spawn location of trees
             repeatRateX_i = Random.Range(-35, -5);
